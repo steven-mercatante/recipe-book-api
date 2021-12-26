@@ -3,3 +3,5 @@ djangorestframework==3.13.1
 gunicorn==20.1.0
 ipython==7.30.1
 python-dotenv==0.19.2
+PyYAML==6.0
+uritemplate==4.1.1

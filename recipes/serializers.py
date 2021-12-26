@@ -13,6 +13,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             'name',
             'ingredients',
             'instructions',
+            'video_url',
         ]
 
     author = serializers.HiddenField(
