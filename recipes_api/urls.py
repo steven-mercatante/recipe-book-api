@@ -20,7 +20,7 @@ from rest_framework import routers
 from recipes import views as recipe_views
 
 router = routers.DefaultRouter()
-router.register(r'recipes', recipe_views.RecipeViewSet)
+router.register(r'recipes', recipe_views.RecipeViewSet, basename='recipes')
 
 urlpatterns = [
     path('', include(router.urls)),
