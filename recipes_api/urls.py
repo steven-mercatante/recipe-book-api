@@ -24,6 +24,6 @@ router.register(r'recipes', recipe_views.RecipeViewSet, basename='recipes')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('api/', include('api.urls')),
+    path('api/', include('api.urls')), # TODO: remove
     path('admin/', admin.site.urls),
 ]
