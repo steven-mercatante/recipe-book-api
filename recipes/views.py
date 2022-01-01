@@ -9,4 +9,3 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Recipe.objects.filter(author=self.request.user)
-        # return Recipe.objects.all()
