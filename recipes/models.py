@@ -27,11 +27,16 @@ class Recipe(models.Model):
     active_time = models.CharField(max_length=25, blank=True)
     total_time = models.CharField(max_length=25, blank=True)
     servings = models.CharField(max_length=25, blank=True)
+    # Even though public_id is derived from self.id, it's a real field
+    # instead of a @property so we can use it in DB lookups.
+    public_id = models.CharField(max_length=8, blank=True)
 
-    @property
-    def public_id(self):
-        return str(self.id)[:8]
+    class Meta:
+        indexes = [
+            models.Index(fields=['public_id', 'slug']),
+        ]
 
     def save(self, *args, **kwargs):
+        self.public_id = str(self.id)[:8]
         self.slug = slugify(self.name)
         super(Recipe, self).save(*args, **kwargs)
