@@ -8,11 +8,22 @@ class RecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = [
             'id',
+            'active_time',
             'author',
             'name',
             'ingredients',
             'instructions',
+            'public_id',
+            'notes',
+            'slug',
+            'source',
+            'total_time',
             'video_url',
+        ]
+        read_only_fields = [
+            'id',
+            'public_id',
+            'slug',
         ]
 
     author = serializers.HiddenField(

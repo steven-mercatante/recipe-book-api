@@ -147,6 +147,9 @@ components:
           type: string
           format: uuid
           readOnly: true
+        active_time:
+          type: string
+          maxLength: 25
         name:
           type: string
           maxLength: 255
@@ -154,6 +157,21 @@ components:
           type: string
         instructions:
           type: string
+        public_id:
+          type: string
+          readOnly: true
+        notes:
+          type: string
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        source:
+          type: string
+          maxLength: 255
+        total_time:
+          type: string
+          maxLength: 25
         video_url:
           type: string
           maxLength: 255
