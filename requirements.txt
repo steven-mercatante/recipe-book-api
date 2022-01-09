@@ -2,6 +2,7 @@ Django>=4.0
 django-cors-headers==3.10.1
 djangorestframework==3.13.1
 django-request-logging==0.7.3
+django-taggit==2.0.0
 gunicorn==20.1.0
 ipython==7.30.1
 psycopg2==2.9.3

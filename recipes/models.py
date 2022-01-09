@@ -3,6 +3,26 @@ import uuid
 from django.conf import settings
 from django.db import models
 from django.utils.text import slugify
+from taggit.managers import TaggableManager
+from taggit.models import GenericUUIDTaggedItemBase, TagBase, TaggedItemBase
+
+
+# We need to define custom `RecipeTag` and `TaggedRecipe` models because
+# `Recipe` uses a UUID for its ID, and taggit only supports integer IDs
+# out of the box.
+# See: https://django-taggit.readthedocs.io/en/latest/custom_tagging.html#genericuuidtaggeditembase
+class RecipeTag(TagBase):
+    class Meta:
+        verbose_name = "Tag"
+        verbose_name_plural = "Tags"
+
+
+class TaggedRecipe(GenericUUIDTaggedItemBase, TaggedItemBase):
+    tag = models.ForeignKey(
+        RecipeTag,
+        on_delete=models.CASCADE,
+        related_name="%(app_label)s_%(class)s_items",
+    )
 
 
 class Recipe(models.Model):
@@ -30,6 +50,7 @@ class Recipe(models.Model):
     # Even though public_id is derived from self.id, it's a real field
     # instead of a @property so we can use it in DB lookups.
     public_id = models.CharField(max_length=8, blank=True)
+    tags = TaggableManager(through=TaggedRecipe)
 
     class Meta:
         indexes = [
