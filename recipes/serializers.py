@@ -1,9 +1,16 @@
 from rest_framework import serializers
+from taggit.serializers import TagListSerializerField, TaggitSerializer
 
 from .models import Recipe
 
 
-class RecipeSerializer(serializers.ModelSerializer):
+class RecipeSerializer(TaggitSerializer, serializers.ModelSerializer):
+    author = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+
+    tags = TagListSerializerField()
+
     class Meta:
         model = Recipe
         fields = [
@@ -17,6 +24,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             'notes',
             'slug',
             'source',
+            'tags',
             'total_time',
             'video_url',
         ]
@@ -25,7 +33,3 @@ class RecipeSerializer(serializers.ModelSerializer):
             'public_id',
             'slug',
         ]
-
-    author = serializers.HiddenField(
-        default=serializers.CurrentUserDefault()
-    )
