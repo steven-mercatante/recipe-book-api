@@ -11,7 +11,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
 
     def get_queryset(self):
-        return Recipe.objects.filter(author=self.request.user)
+        shared_user_ids = self.request.user.get_shared_user_ids()
+        fetch_by_user_ids = [*shared_user_ids, self.request.user.pk]
+        return Recipe.objects.filter(author_id__in=fetch_by_user_ids)
 
     # TODO: test fetch by pk and composite (public_id, slug)
     def retrieve(self, request, *args, **kwargs):

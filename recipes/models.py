@@ -40,3 +40,32 @@ class Recipe(models.Model):
         self.public_id = str(self.id)[:8]
         self.slug = slugify(self.name)
         super(Recipe, self).save(*args, **kwargs)
+
+
+class ShareConfig(models.Model):
+    """
+    Allows sharing recipes between users.
+    """
+    EDITOR = 'Editor'
+    VIEWER = 'Viewer'
+    ROLE_CHOICES = [
+        (EDITOR, EDITOR),
+        (VIEWER, VIEWER),
+    ]
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False
+    )
+    granter = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='granter',
+    )
+    grantee = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='grantee',
+    )
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default=EDITOR)
