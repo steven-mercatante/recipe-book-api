@@ -146,8 +146,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        # TokenAuthentication is only used for testing purposes!
+        'rest_framework.authentication.TokenAuthentication',
         'recipes_api.authentication.DRFAuth0Authentication',
-        # 'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
