@@ -2,9 +2,24 @@ from uuid import UUID
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.generics import ListAPIView
 
-from .models import Recipe
-from .serializers import RecipeSerializer
+from .models import Recipe, RecipeTag
+from .serializers import RecipeSerializer, RecipeTagSerializer
+
+
+class RecipeTagView(ListAPIView):
+    """
+    Fetch all RecipeTags for Recipes that the current user
+    has access to.
+    """
+    serializer_class = RecipeTagSerializer
+
+    def get_queryset(self):
+        recipe_ids = self.request.user.get_recipe_ids()
+        return RecipeTag.objects.filter(
+            recipe__id__in=recipe_ids
+        )
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -13,9 +28,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         # Start by building a queryset for all Recipes the user has access to,
         # including Recipes that've been shared.
-        shared_user_ids = self.request.user.get_shared_user_ids()
-        fetch_by_user_ids = [*shared_user_ids, self.request.user.pk]
-        queryset = Recipe.objects.filter(author_id__in=fetch_by_user_ids)
+        recipe_ids = self.request.user.get_recipe_ids()
+        queryset = Recipe.objects.filter(pk__in=recipe_ids)
 
         # Filter by tag slugs if `tags` query param is present
         try:
@@ -29,7 +43,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     # TODO: test fetch by pk and composite (public_id, slug)
     def retrieve(self, request, *args, **kwargs):
         try:
-            # If kwargs['pk'] is not a valid UUID, an error is raised
+            # If kwargs['pk'] is not a valid UUID, an error is raised,
             # and you can assume you need to look the recipe up by
             # the composite (public_id, slug)
             UUID(kwargs['pk'])

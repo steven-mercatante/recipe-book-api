@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from taggit.serializers import TagListSerializerField, TaggitSerializer
 
-from .models import Recipe
+from .models import Recipe, RecipeTag
 
 
 class RecipeSerializer(TaggitSerializer, serializers.ModelSerializer):
@@ -33,3 +33,9 @@ class RecipeSerializer(TaggitSerializer, serializers.ModelSerializer):
             'public_id',
             'slug',
         ]
+
+
+class RecipeTagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RecipeTag
+        fields = ['name', 'slug']
