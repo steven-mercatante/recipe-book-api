@@ -1,10 +1,11 @@
 from uuid import UUID
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 
-from .models import Recipe, RecipeTag
+from .models import Recipe, RecipeTag, ShareConfig
 from .serializers import RecipeSerializer, RecipeTagSerializer
 
 
@@ -40,7 +41,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         return queryset
 
-    # TODO: test fetch by pk and composite (public_id, slug)
     def retrieve(self, request, *args, **kwargs):
         try:
             # If kwargs['pk'] is not a valid UUID, an error is raised,
@@ -55,6 +55,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
             # one hyphen in it.
             [public_id, slug] = kwargs['pk'].split('-', maxsplit=1)
             recipe = get_object_or_404(Recipe, public_id=public_id, slug=slug)
+
+        # Check if current user is allowed access to the recipe
+        user_owns_recipe = recipe.author == self.request.user
+        recipe_is_shared_with_user = ShareConfig.objects.filter(
+            (Q(granter=recipe.author) & Q(grantee=self.request.user))
+            | (Q(granter=self.request.user) & Q(grantee=recipe.author))
+        ).exists()
+        user_has_access = user_owns_recipe or recipe_is_shared_with_user
+        if not user_has_access:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
         serializer = RecipeSerializer(recipe)
         return Response(serializer.data)
