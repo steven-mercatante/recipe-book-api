@@ -11,9 +11,20 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
 
     def get_queryset(self):
+        # Start by building a queryset for all Recipes the user has access to,
+        # including Recipes that've been shared.
         shared_user_ids = self.request.user.get_shared_user_ids()
         fetch_by_user_ids = [*shared_user_ids, self.request.user.pk]
-        return Recipe.objects.filter(author_id__in=fetch_by_user_ids)
+        queryset = Recipe.objects.filter(author_id__in=fetch_by_user_ids)
+
+        # Filter by tag slugs if `tags` query param is present
+        try:
+            tags = self.request.query_params.get('tags').split(',')
+            queryset = queryset.filter(tags__slug__in=tags).distinct()
+        except AttributeError:
+            pass
+
+        return queryset
 
     # TODO: test fetch by pk and composite (public_id, slug)
     def retrieve(self, request, *args, **kwargs):
