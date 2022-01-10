@@ -9,6 +9,7 @@ class RecipeSerializer(TaggitSerializer, serializers.ModelSerializer):
         default=serializers.CurrentUserDefault()
     )
 
+    owner = serializers.SerializerMethodField()
     tags = TagListSerializerField(required=False)
 
     class Meta:
@@ -22,6 +23,7 @@ class RecipeSerializer(TaggitSerializer, serializers.ModelSerializer):
             'instructions',
             'public_id',
             'notes',
+            'owner',
             'slug',
             'source',
             'tags',
@@ -33,6 +35,9 @@ class RecipeSerializer(TaggitSerializer, serializers.ModelSerializer):
             'public_id',
             'slug',
         ]
+
+    def get_owner(self, obj):
+        return obj.author.email
 
 
 class RecipeTagSerializer(serializers.ModelSerializer):
