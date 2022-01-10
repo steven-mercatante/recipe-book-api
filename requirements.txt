@@ -2,6 +2,7 @@ Django>=4.0
 django-cors-headers==3.10.1
 djangorestframework==3.13.1
 django-request-logging==0.7.3
+factory_boy==3.2.1
 # Install django-taggit directly from git because the version on pypi
 # doesn't include the fix for Django 4 object managers
 # See: https://github.com/jazzband/django-taggit/pull/778
