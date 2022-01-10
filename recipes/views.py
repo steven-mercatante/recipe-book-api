@@ -20,7 +20,7 @@ class RecipeTagView(ListAPIView):
         recipe_ids = self.request.user.get_recipe_ids()
         return RecipeTag.objects.filter(
             recipe__id__in=recipe_ids
-        )
+        ).distinct()
 
 
 class RecipeViewSet(viewsets.ModelViewSet):

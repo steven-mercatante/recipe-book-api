@@ -208,3 +208,56 @@ class RecipeDeleteTestCase(BaseRecipesTestCase):
         resp = self.client.delete(url)
 
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class RecipeTagTestCase(BaseRecipesTestCase):
+    def test_get_tags_for_recipes_owned_by_user(self):
+        RecipeFactory(author=self.user1, tags=['Indian'])
+        RecipeFactory(author=self.user1, tags=['Indian'])
+        RecipeFactory(author=self.user1, tags=['Chinese Food'])
+
+        url = reverse('recipe-tags')
+        resp = self.client.get(url)
+        json_content = json.loads(resp.content)
+        expected_tags = [
+            {'name': 'Chinese Food', 'slug': 'chinese-food'},
+            {'name': 'Indian', 'slug': 'indian'},
+        ]
+
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(json_content), 2)
+        self.assertCountEqual(json_content, expected_tags)
+
+    def test_get_tags_for_recipes_shared_with_user(self):
+        RecipeFactory(author=self.user1, tags=['Indian'])
+        RecipeFactory(author=self.user1, tags=['Indian'])
+        RecipeFactory(author=self.user2, tags=['Chinese Food'])
+        ShareConfigFactory(granter=self.user1, grantee=self.user2)
+
+        url = reverse('recipe-tags')
+        resp = self.client.get(url)
+        json_content = json.loads(resp.content)
+        expected_tags = [
+            {'name': 'Chinese Food', 'slug': 'chinese-food'},
+            {'name': 'Indian', 'slug': 'indian'},
+        ]
+
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(json_content), 2)
+        self.assertCountEqual(json_content, expected_tags)
+
+    def test_user_doesnt_see_tags_for_recipes_they_cant_access(self):
+        RecipeFactory(author=self.user1, tags=['Indian'])
+        RecipeFactory(author=self.user1, tags=['Indian'])
+        RecipeFactory(author=self.user2, tags=['Chinese Food'])
+
+        url = reverse('recipe-tags')
+        resp = self.client.get(url)
+        json_content = json.loads(resp.content)
+        expected_tags = [
+            {'name': 'Indian', 'slug': 'indian'},
+        ]
+
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(json_content), 1)
+        self.assertCountEqual(json_content, expected_tags)
