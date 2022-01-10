@@ -29,6 +29,5 @@ urlpatterns = [
         recipe_views.RecipeTagView.as_view(),
         name='recipe-tags'
     ),
-    path('api/', include('api.urls')), # TODO: remove (incl. app)
     path('admin/', admin.site.urls),
 ]
