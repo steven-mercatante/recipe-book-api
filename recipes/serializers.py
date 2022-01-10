@@ -9,7 +9,7 @@ class RecipeSerializer(TaggitSerializer, serializers.ModelSerializer):
         default=serializers.CurrentUserDefault()
     )
 
-    tags = TagListSerializerField()
+    tags = TagListSerializerField(required=False)
 
     class Meta:
         model = Recipe

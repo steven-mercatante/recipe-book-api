@@ -50,7 +50,7 @@ class Recipe(models.Model):
     # Even though public_id is derived from self.id, it's a real field
     # instead of a @property so we can use it in DB lookups.
     public_id = models.CharField(max_length=8, blank=True)
-    tags = TaggableManager(through=TaggedRecipe)
+    tags = TaggableManager(blank=True, through=TaggedRecipe)
 
     class Meta:
         indexes = [
@@ -58,6 +58,7 @@ class Recipe(models.Model):
         ]
 
     def save(self, *args, **kwargs):
+        # TODO: test public_id and slug are set correctly
         self.public_id = str(self.id)[:8]
         self.slug = slugify(self.name)
         super(Recipe, self).save(*args, **kwargs)
