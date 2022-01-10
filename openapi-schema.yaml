@@ -138,6 +138,24 @@ paths:
           description: ''
       tags:
       - recipes
+  /recipe-tags/:
+    get:
+      operationId: listRecipeTags
+      description: 'Fetch all RecipeTags for Recipes that the current user
+
+        has access to.'
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecipeTag'
+          description: ''
+      tags:
+      - recipe-tags
 components:
   schemas:
     Recipe:
@@ -169,6 +187,8 @@ components:
         source:
           type: string
           maxLength: 255
+        tags:
+          type: string
         total_time:
           type: string
           maxLength: 25
@@ -177,3 +197,17 @@ components:
           maxLength: 255
       required:
       - name
+      - tags
+    RecipeTag:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        slug:
+          type: string
+          maxLength: 100
+          pattern: ^[-a-zA-Z0-9_]+$
+      required:
+      - name
+      - slug
