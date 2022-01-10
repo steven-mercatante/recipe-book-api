@@ -3,6 +3,10 @@ FROM python:3.10-alpine
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+# git is needed for any pip dependencies that point to GitHub
+RUN apk update
+RUN apk add git
+
 WORKDIR /usr/src/app
 
 # Necessary in order to install psycopg2
