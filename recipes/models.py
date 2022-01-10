@@ -63,6 +63,9 @@ class Recipe(models.Model):
         self.slug = slugify(self.name)
         super(Recipe, self).save(*args, **kwargs)
 
+    def __str__(self):
+        return f'Recipe <{self.name}>'
+
 
 class ShareConfig(models.Model):
     """
