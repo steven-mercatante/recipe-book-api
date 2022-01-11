@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
+# from rest_framework.schemas import get_schema_view
 
 from recipes import views as recipe_views
 
@@ -29,5 +30,10 @@ urlpatterns = [
         recipe_views.RecipeTagView.as_view(),
         name='recipe-tags'
     ),
+    # path('openapi', get_schema_view(
+    #     title='Recipe Book',
+    #     description='API for Recipe Book',
+    #     version='0.3.1'
+    # ), name='openapi-schema'),
     path('admin/', admin.site.urls),
 ]
