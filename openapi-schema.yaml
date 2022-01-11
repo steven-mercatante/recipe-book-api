@@ -191,7 +191,7 @@ components:
           type: string
           maxLength: 255
         tags:
-          type: array
+          type: string
         total_time:
           type: string
           maxLength: 25
