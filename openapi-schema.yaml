@@ -180,6 +180,9 @@ components:
           readOnly: true
         notes:
           type: string
+        owner:
+          type: string
+          readOnly: true
         slug:
           type: string
           readOnly: true
@@ -197,7 +200,6 @@ components:
           maxLength: 255
       required:
       - name
-      - tags
     RecipeTag:
       type: object
       properties:
