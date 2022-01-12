@@ -57,7 +57,7 @@ class Recipe(models.Model):
     @staticmethod
     def can_user_edit_recipe(recipe_id, user_id):
         recipe_author_id = Recipe.objects.filter(
-            pk=recipe_id
+            slug=recipe_id
         ).values_list('author_id', flat=True).get()
 
         if recipe_author_id == user_id:
