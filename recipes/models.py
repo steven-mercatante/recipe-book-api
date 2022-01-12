@@ -38,7 +38,7 @@ class Recipe(models.Model):
         on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=255)
-    slug = models.SlugField(blank=True, max_length=75)
+    slug = models.SlugField(blank=True, max_length=75, db_index=True)
     ingredients = models.TextField(blank=True)
     instructions = models.TextField(blank=True)
     notes = models.TextField(blank=True)
@@ -47,20 +47,11 @@ class Recipe(models.Model):
     active_time = models.CharField(max_length=25, blank=True)
     total_time = models.CharField(max_length=25, blank=True)
     servings = models.CharField(max_length=25, blank=True)
-    # Even though public_id is derived from self.id, it's a real field
-    # instead of a @property so we can use it in DB lookups.
-    public_id = models.CharField(max_length=8, blank=True)
     tags = TaggableManager(blank=True, through=TaggedRecipe)
 
-    class Meta:
-        indexes = [
-            models.Index(fields=['public_id', 'slug']),
-        ]
-
     def save(self, *args, **kwargs):
-        # TODO: test public_id and slug are set correctly
-        self.public_id = str(self.id)[:8]
-        self.slug = slugify(self.name)
+        # TODO: test slug is set correctly
+        self.slug = f'{str(self.id)[:8]}-{slugify(self.name)}'
         super(Recipe, self).save(*args, **kwargs)
 
     def __str__(self):

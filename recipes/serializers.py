@@ -21,7 +21,6 @@ class RecipeSerializer(TaggitSerializer, serializers.ModelSerializer):
             'name',
             'ingredients',
             'instructions',
-            'public_id',
             'notes',
             'owner',
             'slug',
@@ -32,7 +31,6 @@ class RecipeSerializer(TaggitSerializer, serializers.ModelSerializer):
         ]
         read_only_fields = [
             'id',
-            'public_id',
             'slug',
         ]
 
