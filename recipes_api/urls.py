@@ -20,15 +20,10 @@ from rest_framework import routers
 
 from recipes import views as recipe_views
 
-router = routers.DefaultRouter()
+router = routers.SimpleRouter()
 router.register(r'recipes', recipe_views.RecipeViewSet, basename='recipes')
 
 urlpatterns = [
-    path(
-        'recipes/<str:slug>/',
-        recipe_views.RecipeRetrieveView.as_view(),
-        name='recipe-retrieve'
-    ),
     path('', include(router.urls)),
     path(
         'recipe-tags/',
