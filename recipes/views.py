@@ -1,9 +1,15 @@
 from uuid import UUID
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from rest_framework import status, viewsets
+from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import (
+    ListAPIView,
+    CreateAPIView,
+    UpdateAPIView,
+    DestroyAPIView,
+    RetrieveAPIView,
+)
 
 from .models import Recipe, RecipeTag, ShareConfig
 from .serializers import RecipeSerializer, RecipeTagSerializer
@@ -23,7 +29,16 @@ class RecipeTagView(ListAPIView):
         ).distinct()
 
 
-class RecipeViewSet(viewsets.ModelViewSet):
+class RecipeRetrieveView(RetrieveAPIView):
+    """
+    Recipes are public, so we'll use a separate read-only viewset that
+    doesn't require authentication or authorization.
+    """
+    authentication_classes = []
+    permission_classes = []
+    serializer_class = RecipeSerializer
+    queryset = Recipe.objects.all()
+    lookup_field = 'slug'
     serializer_class = RecipeSerializer
 
     def get_queryset(self):

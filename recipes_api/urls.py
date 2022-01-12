@@ -24,6 +24,11 @@ router = routers.DefaultRouter()
 router.register(r'recipes', recipe_views.RecipeViewSet, basename='recipes')
 
 urlpatterns = [
+    path(
+        'recipes/<str:slug>/',
+        recipe_views.RecipeRetrieveView.as_view(),
+        name='recipe-retrieve'
+    ),
     path('', include(router.urls)),
     path(
         'recipe-tags/',
