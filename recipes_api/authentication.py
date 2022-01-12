@@ -16,7 +16,7 @@ class AuthError(Exception):
     pass
 
 
-class RecipeDetailsAuthentication(object):
+class RecipeDetailsAuthentication(BaseAuthentication):
     """
     This authentication class returns an AnonymousUser when
     GETting a single Recipe to view, since viewing single Recipes
@@ -35,7 +35,7 @@ class RecipeDetailsAuthentication(object):
 class DRFAuth0Authentication(BaseAuthentication):
     def authenticate(self, request):
         try:
-            self._authenticate(request)
+            return self._authenticate(request)
         except AuthError as e:
             logging.error(e)
             return None
