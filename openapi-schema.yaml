@@ -158,6 +158,26 @@ paths:
           description: ''
       tags:
       - recipes
+  /recipes/{id}/copy_for_user/:
+    get:
+      operationId: copyForUserRecipe
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+          description: ''
+      tags:
+      - recipes
   /recipe-tags/:
     get:
       operationId: listRecipeTags
