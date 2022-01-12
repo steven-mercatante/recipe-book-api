@@ -38,10 +38,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
 
     def get_queryset(self):
+        # TODO: I think this runs for all operations... confirm and only check shared items for list
         # Start by building a queryset for all Recipes the user has access to,
         # including Recipes that've been shared.
         recipe_ids = self.request.user.get_recipe_ids()
-        queryset = Recipe.objects.filter(pk__in=recipe_ids)
+        queryset = Recipe.objects.filter(pk__in=recipe_ids).order_by('name')
 
         # Filter by tag slugs if `tags` query param is present
         try:

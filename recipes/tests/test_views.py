@@ -172,6 +172,17 @@ class RecipeUpdateTestCase(BaseRecipesTestCase):
 
         self.assertEqual(resp.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_slug_does_not_change_when_updating_name(self):
+        recipe = RecipeFactory(author=self.user1, name='my test recipe')
+        old_slug = recipe.slug
+
+        url = reverse('recipes-detail', kwargs={'pk': recipe.pk})
+        resp = self.client.patch(url, data={'name': 'updated name'}, format='json')
+        json_content = json.loads(resp.content)
+
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(json_content['slug'], old_slug)
+
 
 class RecipeDeleteTestCase(BaseRecipesTestCase):
     def test_user_can_delete_a_recipe_they_own(self):

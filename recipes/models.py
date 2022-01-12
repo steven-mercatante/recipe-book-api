@@ -52,7 +52,8 @@ class Recipe(models.Model):
 
     def save(self, *args, **kwargs):
         # TODO: test slug is set correctly
-        self.slug = f'{str(self.id)[:8]}-{slugify(self.name)}'
+        if not self.slug:
+            self.slug = f'{str(self.id)[:8]}-{slugify(self.name)}'
         super(Recipe, self).save(*args, **kwargs)
 
     @staticmethod
