@@ -80,3 +80,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def can_user_edit(self, request, pk):
         can_edit = Recipe.can_user_edit_recipe(pk, request.user.pk)
         return Response({'can_edit': can_edit})
+
+    @action(detail=True, methods=['get'])
+    def copy_for_user(self, request, pk):
+        recipe = Recipe.copy_for_user(pk, request.user.pk)
+        serializer = RecipeSerializer(recipe)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

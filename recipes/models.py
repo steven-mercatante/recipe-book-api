@@ -67,6 +67,7 @@ class Recipe(models.Model):
         recipe.author = user
         recipe._state.adding = True
         recipe.save()
+        return recipe
 
 
     @staticmethod

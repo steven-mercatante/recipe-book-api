@@ -276,3 +276,20 @@ class CanUserEditRecipeTestCase(BaseRecipesTestCase):
 
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         self.assertFalse(json_content['can_edit'])
+
+
+class CopyRecipeForUserTestCase(BaseRecipesTestCase):
+    def test_copy_recipe_for_user(self):
+        user_2_recipe = RecipeFactory(author=self.user2, name="user2's recipe")
+
+        # user1 has no recipes when this test starts
+        self.assertEqual(len(Recipe.objects.filter(author=self.user1)), 0)
+
+        url = reverse('recipes-copy-for-user', kwargs={'pk': user_2_recipe.pk})
+        resp = self.client.get(url)
+        json_content = json.loads(resp.content)
+
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        # user1 should now have 1 recipe
+        self.assertEqual(len(Recipe.objects.filter(author=self.user1)), 1)
+        self.assertNotEqual(user_2_recipe.pk, json_content['id'])
