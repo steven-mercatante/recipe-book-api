@@ -1,6 +1,7 @@
 import uuid
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.text import slugify
 from taggit.managers import TaggableManager
@@ -53,6 +54,20 @@ class Recipe(models.Model):
         # TODO: test slug is set correctly
         self.slug = f'{str(self.id)[:8]}-{slugify(self.name)}'
         super(Recipe, self).save(*args, **kwargs)
+
+    @staticmethod
+    def copy_for_user(recipe_id, user_id):
+        # TODO: might want to also copy over recipe.tags
+        recipe = Recipe.objects.get(pk=recipe_id)
+        user = get_user_model().objects.get(pk=user_id)
+
+        # Copy the model instance
+        # See: https://docs.djangoproject.com/en/4.0/topics/db/queries/#copying-model-instances
+        recipe.pk = uuid.uuid4()
+        recipe.author = user
+        recipe._state.adding = True
+        recipe.save()
+
 
     @staticmethod
     def can_user_edit_recipe(recipe_id, user_id):
