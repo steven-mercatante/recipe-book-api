@@ -138,6 +138,26 @@ paths:
           description: ''
       tags:
       - recipes
+  /recipes/{id}/can_user_edit/:
+    get:
+      operationId: canUserEditRecipe
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+          description: ''
+      tags:
+      - recipes
   /recipe-tags/:
     get:
       operationId: listRecipeTags
@@ -175,9 +195,6 @@ components:
           type: string
         instructions:
           type: string
-        public_id:
-          type: string
-          readOnly: true
         notes:
           type: string
         owner:

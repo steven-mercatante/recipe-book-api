@@ -253,3 +253,26 @@ class RecipeTagTestCase(BaseRecipesTestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         self.assertEqual(len(json_content), 1)
         self.assertCountEqual(json_content, expected_tags)
+
+
+class CanUserEditRecipeTestCase(BaseRecipesTestCase):
+    def test_true_if_user_has_access_to_recipe(self):
+        r = RecipeFactory(author=self.user2)
+        ShareConfigFactory(granter=self.user1, grantee=self.user2)
+
+        url = reverse('recipes-can-user-edit', kwargs={'pk': r.pk})
+        resp = self.client.get(url)
+        json_content = json.loads(resp.content)
+
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertTrue(json_content['can_edit'])
+
+    def test_false_if_user_does_not_have_access_to_recipe(self):
+        r = RecipeFactory(author=self.user2)
+
+        url = reverse('recipes-can-user-edit', kwargs={'pk': r.pk})
+        resp = self.client.get(url)
+        json_content = json.loads(resp.content)
+
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertFalse(json_content['can_edit'])

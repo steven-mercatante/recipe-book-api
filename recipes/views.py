@@ -3,6 +3,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 
@@ -74,3 +75,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         serializer = RecipeSerializer(recipe)
         return Response(serializer.data)
+
+    @action(detail=True, methods=['get'])
+    def can_user_edit(self, request, pk):
+        can_edit = Recipe.can_user_edit_recipe(pk, request.user.pk)
+        return Response({'can_edit': can_edit})
