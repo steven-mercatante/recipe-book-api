@@ -50,10 +50,14 @@ class Recipe(models.Model):
     servings = models.CharField(max_length=25, blank=True)
     tags = TaggableManager(blank=True, through=TaggedRecipe)
 
+    @staticmethod
+    def generate_slug(recipe_pk, recipe_name):
+        return f'{str(recipe_pk)[:8]}-{slugify(recipe_name)}'
+
     def save(self, *args, **kwargs):
         # TODO: test slug is set correctly
         if not self.slug:
-            self.slug = f'{str(self.id)[:8]}-{slugify(self.name)}'
+            self.slug = self.generate_slug(self.id, self.name)
         super(Recipe, self).save(*args, **kwargs)
 
     @staticmethod
@@ -66,6 +70,7 @@ class Recipe(models.Model):
         # See: https://docs.djangoproject.com/en/4.0/topics/db/queries/#copying-model-instances
         recipe.pk = uuid.uuid4()
         recipe.author = user
+        recipe.slug = Recipe.generate_slug(recipe.pk, recipe.name)
         recipe._state.adding = True
         recipe.save()
         return recipe

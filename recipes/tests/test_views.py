@@ -300,7 +300,10 @@ class CopyRecipeForUserTestCase(BaseRecipesTestCase):
         resp = self.client.get(url)
         json_content = json.loads(resp.content)
 
-        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         # user1 should now have 1 recipe
+        user_1_recipe = Recipe.objects.first()
+
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         self.assertEqual(len(Recipe.objects.filter(author=self.user1)), 1)
-        self.assertNotEqual(user_2_recipe.pk, json_content['id'])
+        self.assertNotEqual(user_2_recipe.pk, user_1_recipe.pk)
+        self.assertNotEqual(user_2_recipe.slug, user_1_recipe.slug)
