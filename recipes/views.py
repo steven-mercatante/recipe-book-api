@@ -30,9 +30,9 @@ class RecipeTagView(ListAPIView):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     authentication_classes = [
-        RecipeDetailsAuthentication,
         TokenAuthentication,
         DRFAuth0Authentication,
+        RecipeDetailsAuthentication,
     ]
     serializer_class = RecipeSerializer
 
