@@ -113,28 +113,20 @@ class RecipeCreateTestCase(BaseRecipesTestCase):
 
 
 class RecipeDetailsTestCase(BaseRecipesTestCase):
-    def test_get_by_pk(self):
+    def test_get_by_slug(self):
         recipe = RecipeFactory(author=self.user1)
 
-        url = reverse('recipes-detail', kwargs={'pk': recipe.pk})
+        url = reverse('recipes-detail', kwargs={'pk': recipe.slug})
         resp = self.client.get(url)
         json_content = json.loads(resp.content)
 
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         self.assertEqual(json_content['name'], recipe.name)
 
-    def test_user_gets_404_when_trying_to_get_recipe_they_dont_have_access_to(self):
-        recipe = RecipeFactory(author=self.user2, name="user2's recipe")
+    def test_get_recipe_from_other_user(self):
+        recipe = RecipeFactory(author=self.user2)
 
-        url = reverse('recipes-detail', kwargs={'pk': recipe.pk})
-        resp = self.client.get(url)
-
-        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
-
-    def test_get_by_public_id_and_slug(self):
-        recipe = RecipeFactory(author=self.user1)
-
-        url = reverse('recipes-detail', kwargs={'pk': f'{recipe.public_id}-{recipe.slug}'})
+        url = reverse('recipes-detail', kwargs={'pk': recipe.slug})
         resp = self.client.get(url)
         json_content = json.loads(resp.content)
 
@@ -172,13 +164,13 @@ class RecipeUpdateTestCase(BaseRecipesTestCase):
             'updated name'
         )
 
-    def test_user_gets_404_when_trying_to_update_recipe_they_dont_have_access_to(self):
+    def test_user_gets_403_when_trying_to_update_recipe_they_dont_have_access_to(self):
         recipe = RecipeFactory(author=self.user2, name='original name')
 
         url = reverse('recipes-detail', kwargs={'pk': recipe.pk})
         resp = self.client.patch(url, data={'name': 'updated name'}, format='json')
 
-        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(resp.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class RecipeDeleteTestCase(BaseRecipesTestCase):
@@ -201,13 +193,13 @@ class RecipeDeleteTestCase(BaseRecipesTestCase):
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Recipe.objects.filter(pk=recipe.id).exists())
 
-    def test_user_gets_404_when_trying_to_delete_recipe_they_dont_have_access_to(self):
+    def test_user_gets_403_when_trying_to_delete_recipe_they_dont_have_access_to(self):
         recipe = RecipeFactory(author=self.user2, name='original name')
 
         url = reverse('recipes-detail', kwargs={'pk': recipe.pk})
         resp = self.client.delete(url)
 
-        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(resp.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class RecipeTagTestCase(BaseRecipesTestCase):
